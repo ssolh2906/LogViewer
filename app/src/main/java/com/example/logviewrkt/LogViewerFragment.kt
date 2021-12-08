@@ -6,9 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.logviewrkt.api.EcosApi
+import com.example.logviewrkt.api.EcosFetchr
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,25 +28,13 @@ class LogViewerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val retrofit : Retrofit = Retrofit.Builder()
-            .baseUrl("http://ecos.bok.or.kr/api/")
-            .addConverterFactory(ScalarsConverterFactory.create()) // Call <String>이므로 String return
-            .build()
-        // Retrofit instance 생성
-
-        val ecosApi: EcosApi = retrofit.create(EcosApi::class.java)
-
-        val ecosHomePageRequest: Call<String> = ecosApi.fetchContents() // 웹요청 나타내는 Call 객체 리턴 ( 실행은 enqueue )
-
-        ecosHomePageRequest.enqueue(object : Callback<String> {
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.e(TAG, "Failed to fetch", t)
+        val ecosLiveData: LiveData<String> = EcosFetchr().fetchIndex()
+        ecosLiveData.observe(
+            this,
+            Observer { responseString-> Log.d(TAG, "Response Received: $responseString")
             }
+        )
 
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                Log.d(TAG, "Response recieved: ${response.body()}" )
-            }
-        }) // endqueue, 항상 background 실행
 
 
     } // on Create
