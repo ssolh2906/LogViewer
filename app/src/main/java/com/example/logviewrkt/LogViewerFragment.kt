@@ -28,16 +28,17 @@ class LogViewerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val ecosLiveData: LiveData<String> = EcosFetchr().fetchIndex()
+        val ecosLiveData: LiveData<List<IndexItem>> = EcosFetchr().fetchIndex()
         ecosLiveData.observe(
             this,
-            Observer { responseString-> Log.d(TAG, "Response Received: $responseString")
+            Observer { indexItems ->
+            Log.d(TAG, "Response received: $indexItems")
             }
         )
 
-
-
     } // on Create
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
