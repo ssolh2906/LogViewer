@@ -1,7 +1,9 @@
 package com.example.logviewrkt
 
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.app.ActivityCompat
 
 class LogViewerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,6 +17,8 @@ class LogViewerActivity : AppCompatActivity() {
                 .add(R.id.fragmentContainer, LogViewerFragment.newInstance())
                 .commit()
         }
+
+
 
     } // on create
 }
