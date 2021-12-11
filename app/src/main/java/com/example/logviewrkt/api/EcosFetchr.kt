@@ -17,16 +17,19 @@ class EcosFetchr {
     private val ecosApi:EcosApi
     init {
         val retrofit : Retrofit = Retrofit.Builder()
-            .baseUrl("http://ecos.bok.or.kr/api/")
+            .baseUrl("https://ecos.bok.or.kr/api/")
             .addConverterFactory(GsonConverterFactory.create()) // Call <String>이므로 String return
             .build()
         // Retrofit instance 생성
         ecosApi = retrofit.create(EcosApi::class.java)
+        Log.d(TAG, "EcosFetchr init")
     }
 
-    fun fetchIndex() : LiveData<List<IndexItem>> {    // network 요청을 Queue 에 넣고  그결과를 LiveData 로 반환
+    fun fetchIndex(startYYMM: String, endYYMM:String) : LiveData<List<IndexItem>> {
+        // 인터페이스내부의 미구현 함수를 여기서 구현
+        // network 요청을 Queue 에 넣고  그결과를 LiveData 로 반환
         val responseLiveData: MutableLiveData<List<IndexItem>> = MutableLiveData()
-        val ecosRequest: Call<EcosResponse> = ecosApi.fetchIndex()// 웹요청 나타내는 Call 객체 리턴 ( 실행은 enqueue )
+        val ecosRequest: Call<EcosResponse> = ecosApi.fetchIndex(startYYMM, endYYMM)// 웹요청 나타내는 Call 객체 리턴 ( 실행은 enqueue )
 
         ecosRequest.enqueue(object : Callback<EcosResponse> {
 

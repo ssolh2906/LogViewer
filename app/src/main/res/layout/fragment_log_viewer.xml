@@ -20,11 +20,21 @@
         android:layout_height="wrap_content"
         android:text="request" />
 
+
+
     <TextView
         android:id="@+id/text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/log_viewer_view_recycler_view"

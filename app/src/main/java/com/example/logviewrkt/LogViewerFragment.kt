@@ -14,6 +14,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.w3c.dom.Text
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
 
 
 private const val TAG = "LogViewerFragment"
@@ -24,6 +27,7 @@ class LogViewerFragment : Fragment() {
     private lateinit var logViewerRecyclerView: RecyclerView
     private lateinit var btnRequest:Button
     private lateinit var textView: TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,7 @@ class LogViewerFragment : Fragment() {
 
         btnRequest = view.findViewById(R.id.btn_request)
         textView = view.findViewById(R.id.text_view)
+        chart = view.findViewById(R.id.chart)
 
 
         return view
@@ -66,6 +71,8 @@ class LogViewerFragment : Fragment() {
                     Log.d(TAG, "Have index items from view model $indexItems")
                     // View 내용변경도 여기서 이루어짐, 응답 데이터 변경 시 어댑터에 전달
                     logViewerRecyclerView.adapter = IndexAdapter(indexItems)
+
+
                 }
             )
 
