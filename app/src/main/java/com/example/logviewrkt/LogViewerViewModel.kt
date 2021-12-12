@@ -6,10 +6,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.logviewrkt.api.EcosFetchr
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.ln
 
 
 class LogViewerViewModel :ViewModel(){
@@ -31,6 +39,9 @@ class LogViewerViewModel :ViewModel(){
     public fun updateChart(indexItems: List<IndexItem>,chart: LineChart):LineChart {
         val data : LineData = getLineData(indexItems)
         chart.data = data
+        val xAxis :XAxis = chart.xAxis
+        xAxis.setValueFormatter(AxisDateFormatter())
+
         chart.invalidate()
 
         return chart
@@ -49,14 +60,44 @@ class LogViewerViewModel :ViewModel(){
     private fun indexValues(indexItems: List<IndexItem>) : ArrayList<Entry>
     {
         var indexVals : ArrayList<Entry> = ArrayList<Entry>()
-
+        var from1970:Float
         for (item in indexItems)
         {
-            indexVals.add(Entry(item.time.toFloat(), item.dataValue.toFloat()))
+            from1970 = dateToInterval(item.time)
+            indexVals.add(Entry(
+                from1970,
+                (Math.log(item.dataValue.toDouble())/Math.log(10.0)).toFloat()))
         }
 
         return indexVals
     }
+
+    private fun dateToInterval(time:String) : Float
+    {
+        val dateFormat = SimpleDateFormat("yyyyMMdd")
+        val stdDate = dateFormat.parse("19700101").time
+        val targetDate = dateFormat.parse(time).time
+
+        return ((targetDate - stdDate) / (24*60*60*1000)).toFloat()
+
+    }
+
+    private class AxisDateFormatter :IAxisValueFormatter {
+        override fun getFormattedValue(value: Float, axis: AxisBase?): String {
+
+            val format : SimpleDateFormat = SimpleDateFormat("yyyyMMdd")
+            val outFormat : SimpleDateFormat = SimpleDateFormat("yy-MM-dd")
+            val stdDate : Date = format.parse("19700101")
+            val cal = Calendar.getInstance()
+            cal.time = stdDate
+            cal.add(Calendar.DATE, value.toInt())
+
+            return outFormat.format(cal.time)
+        }
+
+    }
+
+
 
 
 }
