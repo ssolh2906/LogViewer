@@ -1,6 +1,7 @@
 package com.example.logviewrkt
 
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,8 @@ import org.w3c.dom.Text
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 
 private const val TAG = "LogViewerFragment"
@@ -24,9 +27,11 @@ private const val TAG = "LogViewerFragment"
 class LogViewerFragment : Fragment() {
 
     private lateinit var logViewerViewModel: LogViewerViewModel
-    private lateinit var logViewerRecyclerView: RecyclerView
     private lateinit var btnRequest:Button
     private lateinit var textView: TextView
+    private lateinit var chart : LineChart
+    private lateinit var fromDate : TextView
+    private lateinit var toDate : TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,8 +39,6 @@ class LogViewerFragment : Fragment() {
         logViewerViewModel =
             ViewModelProvider(this).get(LogViewerViewModel::class.java)
         // fragment 최초생성시에는 요청이실행되어 뷰모델이새로생성되고, 추후 다시 호출되면 이전에 생성 된 뷰모델 사용
-
-
     } // on Create
 
     override fun onCreateView(
@@ -45,13 +48,14 @@ class LogViewerFragment : Fragment() {
     ) : View {
         val view = inflater.inflate(R.layout.fragment_log_viewer, container, false)
 
-        logViewerRecyclerView = view.findViewById(R.id.log_viewer_view_recycler_view)
-        logViewerRecyclerView.layoutManager = GridLayoutManager(context, 3)
+        //logViewerRecyclerView = view.findViewById(R.id.log_viewer_view_recycler_view)
+        //logViewerRecyclerView.layoutManager = GridLayoutManager(context, 3)
 
         btnRequest = view.findViewById(R.id.btn_request)
         textView = view.findViewById(R.id.text_view)
         chart = view.findViewById(R.id.chart)
-
+        fromDate = view.findViewById(R.id.from_date)
+        toDate = view.findViewById(R.id.to_date)
 
         return view
     } // onCreateView
@@ -64,14 +68,15 @@ class LogViewerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         btnRequest.setOnClickListener { v:View ->
-            textView.text = "Button clicked"
+
             logViewerViewModel.indexItemLiveData.observe(
                 viewLifecycleOwner,
                 Observer { indexItems ->
-                    Log.d(TAG, "Have index items from view model $indexItems")
+                    Log.d(TAG, "Have index items from view model {$indexItems}")
                     // View 내용변경도 여기서 이루어짐, 응답 데이터 변경 시 어댑터에 전달
-                    logViewerRecyclerView.adapter = IndexAdapter(indexItems)
-
+                    //logViewerRecyclerView.adapter = IndexAdapter(indexItems)
+                    logViewerViewModel.updateLivedata(fromDate.text.toString() , toDate.text.toString())
+                    chart = logViewerViewModel.updateChart(indexItems, chart)
 
                 }
             )
@@ -80,31 +85,14 @@ class LogViewerFragment : Fragment() {
     }
 
 
-
-    //ViewHolder Subclass 추가
-    private class IndexHolder(itemTextView: TextView) : RecyclerView.ViewHolder(itemTextView)
-    {
-        val bindTitle: (CharSequence) -> Unit = itemTextView::setText
-    }
-
-    // RecyclerView.Adapter  의 Subclass
-    private class IndexAdapter(private val indexItems: List<IndexItem>) : RecyclerView.Adapter<IndexHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IndexHolder {
-            val textView = TextView(parent.context)
-            return IndexHolder(textView)
-        }
-
-        override fun getItemCount(): Int = indexItems.size
-
-        override fun onBindViewHolder(holder: IndexHolder, position: Int) {
-            val indexItem = indexItems[position]
-            holder.bindTitle(indexItem.dataValue)
-        }
-    }
-
     companion object {
     fun newInstance() = LogViewerFragment()
     }
+
+
+
+
+
 
 
 } // logviewer fragment

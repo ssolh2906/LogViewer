@@ -15,7 +15,7 @@ interface EcosApi { // 추상함수 가져서 인터페이스인가봐....
                 BuildConfig.ECOS_API_KEY +
                 "/json" +
                 "/kr" +
-                "/10/20" +  //결과시작인덱스, 끝인덱스
+                "/1/10" +  //결과시작인덱스, 끝인덱스
                 "/028Y015" +
                 "/MM" +
                 "/{startYYMM}"+ // 시작점
