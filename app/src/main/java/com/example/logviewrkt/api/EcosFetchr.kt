@@ -1,5 +1,6 @@
 package com.example.logviewrkt.api
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,6 +11,9 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.math.log
 
 private const val TAG = "EcosFetchr"
 
@@ -29,7 +33,9 @@ class EcosFetchr {
         // 인터페이스내부의 미구현 함수를 여기서 구현
         // network 요청을 Queue 에 넣고  그결과를 LiveData 로 반환
         val responseLiveData: MutableLiveData<List<IndexItem>> = MutableLiveData()
-        val ecosRequest: Call<EcosResponse> = ecosApi.fetchIndex(startYYMM, endYYMM)// 웹요청 나타내는 Call 객체 리턴 ( 실행은 enqueue )
+        val endIndex :String = getEndIndex(startYYMM, endYYMM)
+
+        val ecosRequest: Call<EcosResponse> = ecosApi.fetchIndex(startYYMM, endYYMM, endIndex)// 웹요청 나타내는 Call 객체 리턴 ( 실행은 enqueue )
 
         ecosRequest.enqueue(object : Callback<EcosResponse> {
 
@@ -38,7 +44,7 @@ class EcosFetchr {
             }
 
             override fun onResponse(call: Call<EcosResponse>, response: Response<EcosResponse>) {
-                Log.d(TAG, "Response recieved" )
+                Log.d(TAG, "Response recieved " )
                 val ecosResponse : EcosResponse? = response.body()
                 val statisticSearchResponse : StatisticSearchResponse? = ecosResponse?.StatisticSearch
                 var indexItems : List<IndexItem> = statisticSearchResponse?.indexItems?: mutableListOf()
@@ -48,4 +54,18 @@ class EcosFetchr {
 
     return responseLiveData // immutable
     }
+
+    private fun getEndIndex(startYYMM: String, endYYMM: String):String
+    {
+        val dateFormat = SimpleDateFormat("yyyyMMdd")
+
+        val startDate = dateFormat.parse((startYYMM+"01")).time
+        val endDate = dateFormat.parse((endYYMM+"01")).time
+        val endIndex  = ((endDate - startDate) / (24 * 60 * 60 * 1000)).toInt().toString()
+
+        Log.d(TAG, "EndIndex :" + endIndex)
+
+        return endIndex
+    }
+
 }

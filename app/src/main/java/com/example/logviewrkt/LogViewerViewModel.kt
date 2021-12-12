@@ -19,9 +19,8 @@ class LogViewerViewModel :ViewModel(){
     lateinit var data :LineData
 
     init {
-        indexItemLiveData = EcosFetchr().fetchIndex("200001", "202001")
+        indexItemLiveData = EcosFetchr().fetchIndex("202101", "202111")
         // view model 최초 실행 시에만 웹 요청하고 여기에 데이터 저장
-
     }
 
     public fun updateLivedata(fromDate:String, toDate:String): Unit

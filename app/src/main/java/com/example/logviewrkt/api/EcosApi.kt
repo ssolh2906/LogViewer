@@ -15,12 +15,16 @@ interface EcosApi { // 추상함수 가져서 인터페이스인가봐....
                 BuildConfig.ECOS_API_KEY +
                 "/json" +
                 "/kr" +
-                "/1/10" +  //결과시작인덱스, 끝인덱스
-                "/028Y015" +
-                "/MM" +
-                "/{startYYMM}"+ // 시작점
-                "/{endYYMM}" + // 끝점
-                "/1080000/?/?/"
+                "/1/{endIndex}" +   //결과시작인덱스, 끝인덱스
+                "/064Y001" +         // for DD
+                "/DD" +
+                "/{startYYMMDD}"+   // 시작점
+                "/{endYYMMDD}" +    // 끝점
+                "/0001000/?/?/"
     )
-    fun fetchIndex(@Path("startYYMM") startYYMM : String, @Path("endYYMM") endYYMM : String): Call<EcosResponse>
+    fun fetchIndex(
+        @Path("startYYMMDD") startYYMMDD : String,
+        @Path("endYYMMDD") endYYMMDD : String,
+        @Path("endIndex") endIndex:String
+    ): Call<EcosResponse>
 }
