@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Switch
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -32,6 +33,8 @@ class LogViewerFragment : Fragment() {
     private lateinit var chart : LineChart
     private lateinit var fromDate : TextView
     private lateinit var toDate : TextView
+    private lateinit var switchLog : Switch
+    private var isLog : Boolean = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +59,7 @@ class LogViewerFragment : Fragment() {
         chart = view.findViewById(R.id.chart)
         fromDate = view.findViewById(R.id.from_date)
         toDate = view.findViewById(R.id.to_date)
+        switchLog = view.findViewById(R.id.switch_log)
 
         return view
     } // onCreateView
@@ -76,7 +80,7 @@ class LogViewerFragment : Fragment() {
                     // View 내용변경도 여기서 이루어짐, 응답 데이터 변경 시 어댑터에 전달
                     //logViewerRecyclerView.adapter = IndexAdapter(indexItems)
                     logViewerViewModel.updateLivedata(fromDate.text.toString() , toDate.text.toString())
-                    chart = logViewerViewModel.updateChart(indexItems, chart)
+                    chart = logViewerViewModel.updateChart(indexItems, chart, switchLog.isChecked)
 
                 }
             )

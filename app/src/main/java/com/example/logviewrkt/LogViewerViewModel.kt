@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.example.logviewrkt.api.EcosFetchr
+import com.example.logviewrkt.api.Ecos_daily.EcosFetchr
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -23,33 +23,34 @@ import kotlin.math.ln
 class LogViewerViewModel :ViewModel(){
 
     // live data 참조
-    var indexItemLiveData: LiveData<List<IndexItem>>
+    lateinit var indexItemLiveData: LiveData<List<IndexItem>>
     lateinit var data :LineData
 
     init {
-        indexItemLiveData = EcosFetchr().fetchIndex("202101", "202111")
+
         // view model 최초 실행 시에만 웹 요청하고 여기에 데이터 저장
+        indexItemLiveData = EcosFetchr().fetchIndex("202101", "202111")
+
     }
 
-    public fun updateLivedata(fromDate:String, toDate:String): Unit
+    fun updateLivedata(fromDate:String, toDate:String): Unit
     {
+
         indexItemLiveData = EcosFetchr().fetchIndex(fromDate, toDate)
     }
 
-    public fun updateChart(indexItems: List<IndexItem>,chart: LineChart):LineChart {
-        val data : LineData = getLineData(indexItems)
+    fun updateChart(indexItems: List<IndexItem>,chart: LineChart, isLog : Boolean):LineChart {
+        val data : LineData = getLineData(indexItems, isLog)
         chart.data = data
-        val xAxis :XAxis = chart.xAxis
-        xAxis.setValueFormatter(AxisDateFormatter())
-
+        chart.xAxis.valueFormatter = AxisDateFormatter()
         chart.invalidate()
 
         return chart
     }
 
 
-    private fun getLineData(indexItems: List<IndexItem>) :LineData {
-        var lineDataSet : LineDataSet = LineDataSet(indexValues(indexItems), "Linear Data Set")
+    private fun getLineData(indexItems: List<IndexItem>, isLog: Boolean) :LineData {
+        var lineDataSet : LineDataSet = LineDataSet(indexValues(indexItems, isLog), "Linear Data Set")
         var dataSets : ArrayList<ILineDataSet> = ArrayList()
         dataSets.add(lineDataSet)
         var data: LineData = LineData(dataSets);
@@ -57,16 +58,31 @@ class LogViewerViewModel :ViewModel(){
         return data
     }
 
-    private fun indexValues(indexItems: List<IndexItem>) : ArrayList<Entry>
+    private fun indexValues(indexItems: List<IndexItem>, isLog: Boolean) : ArrayList<Entry>
     {
         var indexVals : ArrayList<Entry> = ArrayList<Entry>()
         var from1970:Float
-        for (item in indexItems)
-        {
-            from1970 = dateToInterval(item.time)
-            indexVals.add(Entry(
-                from1970,
-                (Math.log(item.dataValue.toDouble())/Math.log(10.0)).toFloat()))
+        if (isLog) {
+            for (item in indexItems) {
+                from1970 = dateToInterval(item.time)
+                indexVals.add(
+                    Entry(
+                        from1970,
+                        (ln(item.dataValue.toDouble()) / ln(10f)).toFloat()
+                    )
+                )
+            }
+        } else {
+            for (item in indexItems) {
+                from1970 = dateToInterval(item.time)
+                indexVals.add(
+                    Entry(
+                        from1970,
+                        (item.dataValue.toFloat())
+                    )
+                )
+            }
+
         }
 
         return indexVals

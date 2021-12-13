@@ -1,24 +1,21 @@
-package com.example.logviewrkt.api
+package com.example.logviewrkt.api.Ecos_monthly
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.logviewrkt.IndexItem
+import com.example.logviewrkt.api.Ecos_monthly.EcosApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.math.log
 
 private const val TAG = "EcosFetchr"
 
 class EcosFetchr {
-    private val ecosApi:EcosApi
+    private val ecosApi: EcosApi
     init {
         val retrofit : Retrofit = Retrofit.Builder()
             .baseUrl("https://ecos.bok.or.kr/api/")
@@ -57,11 +54,10 @@ class EcosFetchr {
 
     private fun getEndIndex(startYYMM: String, endYYMM: String):String
     {
-        val dateFormat = SimpleDateFormat("yyyyMMdd")
+        val yearGap = endYYMM.subSequence(0..4).toString().toInt() - startYYMM.subSequence(0..4).toString().toInt()
+        val monGap = endYYMM.subSequence(5..6).toString().toInt() - startYYMM.subSequence(5..6).toString().toInt()
 
-        val startDate = dateFormat.parse((startYYMM+"01")).time
-        val endDate = dateFormat.parse((endYYMM+"01")).time
-        val endIndex  = ((endDate - startDate) / (24 * 60 * 60 * 1000)).toInt().toString()
+        val endIndex = (yearGap * 12 - monGap).toString()
 
         Log.d(TAG, "EndIndex :" + endIndex)
 

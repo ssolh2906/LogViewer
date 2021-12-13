@@ -1,4 +1,4 @@
-package com.example.logviewrkt.api
+package com.example.logviewrkt.api.Ecos_monthly
 
 import com.example.logviewrkt.IndexItem
 import com.google.gson.annotations.SerializedName
