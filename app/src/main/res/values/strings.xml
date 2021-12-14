@@ -3,4 +3,6 @@
     <string name="startYYMM">"202001"</string>
     <string name="input_msg_from_date">From : </string>
     <string name="input_msg_to_date">To : </string>
+    <string name="text_direction_kr">검색할 범위를 yyyyMM 형태로 입력해주세요.</string>
+    <string name="btn_request_kr">요청하기/새로고침</string>
 </resources>

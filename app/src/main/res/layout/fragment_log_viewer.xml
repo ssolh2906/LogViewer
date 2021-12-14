@@ -5,46 +5,46 @@
     android:id="@+id/log_viewer_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:textAlignment="center">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="400dp">
+        android:layout_height="400dp"
+        android:layout_margin="@dimen/margin_default">
 
     </com.github.mikephil.charting.charts.LineChart>
 
-    <LinearLayout
+
+    <TextView
+        android:id="@+id/text_direction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Switch
-            android:id="@+id/switch_log"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Logarithm" />
-
-    </LinearLayout>
-
+        android:layout_margin="@dimen/margin_small"
+        android:text="@string/text_direction_kr"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        android:layout_marginBottom="0dp"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/textView"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.3"
             android:text="@string/input_msg_from_date"
-            android:layout_width="0dp"/>
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/from_date"
-            android:layout_height="wrap_content"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:hint="from"
@@ -55,19 +55,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_height="wrap_content"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/input_msg_to_date" />
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/input_msg_to_date"
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/to_date"
-            android:layout_height="wrap_content"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
             android:hint="to"
@@ -75,11 +77,28 @@
             android:text="202111" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_request"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="request" />
+        android:orientation="horizontal">
+
+        <Switch
+            android:id="@+id/switch_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:checked="true"
+            android:text="Logarithm" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_request"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/margin_default"
+        android:text="@string/btn_request_kr" />
 
 
     <TextView
@@ -87,7 +106,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="invisible" />
-
 
 
 </LinearLayout>
