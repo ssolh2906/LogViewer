@@ -2,6 +2,7 @@ package com.example.logviewrkt
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,10 +19,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.w3c.dom.Text
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 private const val TAG = "LogViewerFragment"
@@ -36,16 +41,17 @@ class LogViewerFragment : Fragment() {
     private lateinit var toDate : TextView
     private lateinit var switchLog : Switch
     lateinit var nameOfIndex : String
-
-
+    lateinit var textNameOfIndex : TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        nameOfIndex = arguments?.getString("nameOfIndex").toString()
+        nameOfIndex = arguments?.getString("name of index").toString()
         logViewerViewModel =
             ViewModelProvider(this).get(LogViewerViewModel::class.java)
         // fragment 최초생성시에는 요청이실행되어 뷰모델이새로생성되고, 추후 다시 호출되면 이전에 생성 된 뷰모델 사용
+
+
     } // on Create
 
     override fun onCreateView(
@@ -63,9 +69,27 @@ class LogViewerFragment : Fragment() {
         textView = view.findViewById(R.id.text_view)
         chart = view.findViewById(R.id.chart)
         chart.setNoDataText("기간을 입력하신 후 요청하기/새로고침 버튼을 눌러주세요")
+        chart.xAxis.valueFormatter = AxisDateFormatter()
         fromDate = view.findViewById(R.id.from_date)
         toDate = view.findViewById(R.id.to_date)
         switchLog = view.findViewById(R.id.switch_log)
+        textNameOfIndex = view.findViewById(R.id.text_nameOfIndex)
+        textNameOfIndex.text = nameOfIndex
+
+
+        btnRequest.setOnClickListener { v:View ->
+            logViewerViewModel.updateLivedata(fromDate.text.toString() , toDate.text.toString(), nameOfIndex)
+            logViewerViewModel.indexItemLiveData.observe(
+                viewLifecycleOwner,
+                Observer { indexItems ->
+                    Log.d(TAG, "Change Observed,Have index items from view model {$indexItems}")
+                    // View 내용변경도 여기서 이루어짐, 응답 데이터 변경 시 전달
+                    logViewerViewModel.updateChart(indexItems, chart, switchLog.isChecked, nameOfIndex)
+                }
+            )
+            //이미 차트는 업데이트 아닌 데이터 넘어옴
+
+        }// btn click
 
         return view
     } // onCreateView
@@ -77,29 +101,41 @@ class LogViewerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        btnRequest.setOnClickListener { v:View ->
+        logViewerViewModel.indexItemLiveData.observe(
+            viewLifecycleOwner,
+            Observer { indexItems ->
+                Log.d(TAG, "Change Observed,Have index items from view model {$indexItems}")
+                // View 내용변경도 여기서 이루어짐, 응답 데이터 변경 시 전달
+                logViewerViewModel.updateChart(indexItems, chart, switchLog.isChecked, nameOfIndex)
+            }
+        )
 
-            logViewerViewModel.indexItemLiveData.observe(
-                viewLifecycleOwner,
-                Observer { indexItems ->
-                    Log.d(TAG, "Have index items from view model {$indexItems}")
-                    // View 내용변경도 여기서 이루어짐, 응답 데이터 변경 시 어댑터에 전달
-                    //logViewerRecyclerView.adapter = IndexAdapter(indexItems)
 
-                    logViewerViewModel.updateLivedata(fromDate.text.toString() , toDate.text.toString(), nameOfIndex)
-                    chart = logViewerViewModel.updateChart(indexItems, chart, switchLog.isChecked, nameOfIndex)
-
-                }
-            )
-
-        }
     }
+
+
 
 
     companion object {
     fun newInstance() = LogViewerFragment()
     }
 
+
+    private class AxisDateFormatter : IAxisValueFormatter {
+        override fun getFormattedValue(value: Float, axis: AxisBase?): String {
+            Log.d(TAG, "#11")
+
+            val format : SimpleDateFormat = SimpleDateFormat("yyyyMMdd")
+            val outFormat : SimpleDateFormat = SimpleDateFormat("yy-MM-dd")
+            val stdDate : Date = format.parse("19700101")
+            val cal = Calendar.getInstance()
+            cal.time = stdDate
+            cal.add(Calendar.DATE, value.toInt())
+
+            return outFormat.format(cal.time)
+        }
+
+    }
 
 
 
