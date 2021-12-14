@@ -57,6 +57,7 @@ class LogViewerFragment : Fragment() {
         btnRequest = view.findViewById(R.id.btn_request)
         textView = view.findViewById(R.id.text_view)
         chart = view.findViewById(R.id.chart)
+        chart.setNoDataText("기간을 입력하신 후 요청하기/새로고침 버튼을 눌러주세요")
         fromDate = view.findViewById(R.id.from_date)
         toDate = view.findViewById(R.id.to_date)
         switchLog = view.findViewById(R.id.switch_log)
