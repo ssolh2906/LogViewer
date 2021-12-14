@@ -26,13 +26,13 @@ class EcosFetchr {
         Log.d(TAG, "EcosFetchr init")
     }
 
-    fun fetchIndex(startYYMM: String, endYYMM:String) : LiveData<List<IndexItem>> {
+    fun fetchIndex(startYYMM: String, endYYMM:String, nameOfIndex:String) : LiveData<List<IndexItem>> {
         // 인터페이스내부의 미구현 함수를 여기서 구현
         // network 요청을 Queue 에 넣고  그결과를 LiveData 로 반환
         val responseLiveData: MutableLiveData<List<IndexItem>> = MutableLiveData()
         val endIndex :String = getEndIndex(startYYMM, endYYMM)
-
-        val ecosRequest: Call<EcosResponse> = ecosApi.fetchIndex(startYYMM, endYYMM, endIndex)// 웹요청 나타내는 Call 객체 리턴 ( 실행은 enqueue )
+        val indexID : String = getIndexID(nameOfIndex)
+        val ecosRequest: Call<EcosResponse> = ecosApi.fetchIndex(startYYMM, endYYMM, endIndex, indexID)// 웹요청 나타내는 Call 객체 리턴 ( 실행은 enqueue )
 
         ecosRequest.enqueue(object : Callback<EcosResponse> {
 
@@ -64,5 +64,23 @@ class EcosFetchr {
 
         return endIndex
     }
+
+    private fun getIndexID(nameOfIndex: String) : String
+    {
+        when(nameOfIndex)
+        {
+            "KOSPI" ->
+            {
+                return "0001000"
+            }
+            "KOSDAQ" ->
+            {
+                return "0089000"
+            }
+
+        }
+        return "0001000"
+    }
+
 
 }

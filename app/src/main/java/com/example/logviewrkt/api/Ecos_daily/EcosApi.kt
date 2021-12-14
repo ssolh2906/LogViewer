@@ -20,11 +20,12 @@ interface EcosApi { // 추상함수 가져서 인터페이스인가봐....
                 "/DD" +
                 "/{startYYMMDD}"+   // 시작점
                 "/{endYYMMDD}" +    // 끝점
-                "/0001000/?/?/"
+                "/{indexID}/?/?/"
     )
     fun fetchIndex(
         @Path("startYYMMDD") startYYMMDD : String,
         @Path("endYYMMDD") endYYMMDD : String,
-        @Path("endIndex") endIndex:String
+        @Path("endIndex") endIndex:String,
+        @Path("indexID") indexID : String
     ): Call<EcosResponse>
 }

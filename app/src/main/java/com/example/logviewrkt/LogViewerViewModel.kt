@@ -23,21 +23,23 @@ class LogViewerViewModel :ViewModel(){
     // live data 참조
     lateinit var indexItemLiveData: LiveData<List<IndexItem>>
     lateinit var data :LineData
+    lateinit var nameOfIndex: String
+
 
     init {
 
         // view model 최초 실행 시에만 웹 요청하고 여기에 데이터 저장
-        indexItemLiveData = EcosFetchr().fetchIndex("202101", "202111")
+        //indexItemLiveData = EcosFetchr().fetchIndex("202101", "202111", "KOSPI")
 
     }
 
-    fun updateLivedata(fromDate:String, toDate:String): Unit
+    fun updateLivedata(fromDate:String, toDate:String, nameOfIndex : String): Unit
     {
 
-        indexItemLiveData = EcosFetchr().fetchIndex(fromDate, toDate)
+        indexItemLiveData = EcosFetchr().fetchIndex(fromDate, toDate, nameOfIndex)
     }
 
-    fun updateChart(indexItems: List<IndexItem>,chart: LineChart, isLog : Boolean):LineChart {
+    fun updateChart(indexItems: List<IndexItem>,chart: LineChart, isLog : Boolean, nameOfIndex: String):LineChart {
         val data : LineData = getLineData(indexItems, isLog)
         chart.data = data
         chart.xAxis.valueFormatter = AxisDateFormatter()
@@ -48,7 +50,8 @@ class LogViewerViewModel :ViewModel(){
 
 
     private fun getLineData(indexItems: List<IndexItem>, isLog: Boolean) :LineData {
-        var lineDataSet : LineDataSet = LineDataSet(indexValues(indexItems, isLog), "Linear Data Set")
+        var lineDataSet : LineDataSet = LineDataSet(indexValues(indexItems, isLog), "KOSPI")
+        lineDataSet.setDrawCircles(false)
         var dataSets : ArrayList<ILineDataSet> = ArrayList()
         dataSets.add(lineDataSet)
         var data: LineData = LineData(dataSets);

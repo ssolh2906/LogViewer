@@ -1,5 +1,6 @@
 package com.example.logviewrkt
 
+import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
@@ -34,11 +35,14 @@ class LogViewerFragment : Fragment() {
     private lateinit var fromDate : TextView
     private lateinit var toDate : TextView
     private lateinit var switchLog : Switch
-    private var isLog : Boolean = true
+    lateinit var nameOfIndex : String
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        nameOfIndex = arguments?.getString("nameOfIndex").toString()
         logViewerViewModel =
             ViewModelProvider(this).get(LogViewerViewModel::class.java)
         // fragment 최초생성시에는 요청이실행되어 뷰모델이새로생성되고, 추후 다시 호출되면 이전에 생성 된 뷰모델 사용
@@ -48,7 +52,8 @@ class LogViewerFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ) : View {
+    ) : View
+    {
         val view = inflater.inflate(R.layout.fragment_log_viewer, container, false)
 
         //logViewerRecyclerView = view.findViewById(R.id.log_viewer_view_recycler_view)
@@ -80,8 +85,9 @@ class LogViewerFragment : Fragment() {
                     Log.d(TAG, "Have index items from view model {$indexItems}")
                     // View 내용변경도 여기서 이루어짐, 응답 데이터 변경 시 어댑터에 전달
                     //logViewerRecyclerView.adapter = IndexAdapter(indexItems)
-                    logViewerViewModel.updateLivedata(fromDate.text.toString() , toDate.text.toString())
-                    chart = logViewerViewModel.updateChart(indexItems, chart, switchLog.isChecked)
+
+                    logViewerViewModel.updateLivedata(fromDate.text.toString() , toDate.text.toString(), nameOfIndex)
+                    chart = logViewerViewModel.updateChart(indexItems, chart, switchLog.isChecked, nameOfIndex)
 
                 }
             )
