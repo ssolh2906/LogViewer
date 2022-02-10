@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LogViewrKt">
         <activity
-            android:name=".LogViewerActivity"
+            android:name=".screens.logViewer.LogViewerActivity"
             android:exported="true">
 
         </activity>

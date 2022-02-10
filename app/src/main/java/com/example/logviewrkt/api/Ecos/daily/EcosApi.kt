@@ -1,14 +1,12 @@
-package com.example.logviewrkt.api.Ecos_daily
+package com.example.logviewrkt.api.Ecos.daily
 
 import com.example.logviewrkt.BuildConfig
+import com.example.logviewrkt.api.Ecos.daily.EcosResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface EcosApi { // 추상함수 가져서 인터페이스인가봐....
-
-    //@GET("/")
-    //fun fetchContents() : Call<String>
 
     @GET(
         "StatisticSearch/" +

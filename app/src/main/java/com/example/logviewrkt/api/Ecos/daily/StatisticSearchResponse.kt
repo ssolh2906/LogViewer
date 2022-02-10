@@ -1,4 +1,4 @@
-package com.example.logviewrkt.api.Ecos_daily
+package com.example.logviewrkt.api.Ecos.daily
 
 import com.example.logviewrkt.IndexItem
 import com.google.gson.annotations.SerializedName

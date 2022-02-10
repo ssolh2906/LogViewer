@@ -1,4 +1,4 @@
-package com.example.logviewrkt
+package com.example.logviewrkt.screens.logViewer
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -6,11 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.example.logviewrkt.R
 
 private const val TAG: String = "LogViewerActivity"
 
+
 class LogViewerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i(TAG, "LogViewerActivity Created")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log_viewer)
 
@@ -29,8 +32,6 @@ class LogViewerActivity : AppCompatActivity() {
                 .add(R.id.fragmentContainer, logViewerFragment)
                 .commit()
         }
-
-
 
     } // on create
 }

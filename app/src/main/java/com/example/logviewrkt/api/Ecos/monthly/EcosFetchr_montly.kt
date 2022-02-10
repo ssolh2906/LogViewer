@@ -1,18 +1,14 @@
-package com.example.logviewrkt.api.Ecos_daily
+package com.example.logviewrkt.api.Ecos.monthly
 
-import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.logviewrkt.IndexItem
-import com.example.logviewrkt.LogViewerViewModel
-import com.example.logviewrkt.api.Ecos_daily.EcosApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
 
 private const val TAG = "EcosFetchr"
 
@@ -28,15 +24,13 @@ class EcosFetchr {
         Log.d(TAG, "EcosFetchr init")
     }
 
-
-    fun fetchIndex(startYYMM: String, endYYMM:String, nameOfIndex:String) : LiveData<List<IndexItem>> {
+    fun fetchIndex(startYYMM: String, endYYMM:String, nameOfIndex: String) : LiveData<List<IndexItem>> {
         // 인터페이스내부의 미구현 함수를 여기서 구현
         // network 요청을 Queue 에 넣고  그결과를 LiveData 로 반환
         val responseLiveData: MutableLiveData<List<IndexItem>> = MutableLiveData()
         val endIndex :String = getEndIndex(startYYMM, endYYMM)
         val indexID : String = getIndexID(nameOfIndex)
         val ecosRequest: Call<EcosResponse> = ecosApi.fetchIndex(startYYMM, endYYMM, endIndex, indexID)// 웹요청 나타내는 Call 객체 리턴 ( 실행은 enqueue )
-
 
         ecosRequest.enqueue(object : Callback<EcosResponse> {
 
@@ -45,31 +39,30 @@ class EcosFetchr {
             }
 
             override fun onResponse(call: Call<EcosResponse>, response: Response<EcosResponse>) {
-                Log.d(TAG, "Response recieved")
+                Log.d(TAG, "Response recieved " )
                 val ecosResponse : EcosResponse? = response.body()
                 val statisticSearchResponse : StatisticSearchResponse? = ecosResponse?.StatisticSearch
-                var indexItems = statisticSearchResponse?.indexItems?: mutableListOf()
+                var indexItems : List<IndexItem> = statisticSearchResponse?.indexItems?: mutableListOf()
                 responseLiveData.value = indexItems
             }
-
         }) // endqueue, 항상 background 실행
 
-
-        return responseLiveData // immutable
+    return responseLiveData // immutable
     }
 
     private fun getEndIndex(startYYMM: String, endYYMM: String):String
     {
-        val dateFormat = SimpleDateFormat("yyyyMMdd")
+        Log.i(TAG, "getEndIndex arg1 : $startYYMM, arg2 : $endYYMM")
+        val yearGap = endYYMM.subSequence(0..3).toString().toInt() - startYYMM.subSequence(0..3).toString().toInt()
+        val monGap = endYYMM.subSequence(4..5).toString().toInt() - startYYMM.subSequence(4..5).toString().toInt()
 
-        val startDate = dateFormat.parse((startYYMM+"01")).time
-        val endDate = dateFormat.parse((endYYMM+"01")).time
-        val endIndex  = ((endDate - startDate) / (24 * 60 * 60 * 1000)).toInt().toString()
+        val endIndex = (yearGap * 12 + monGap).toString()
 
         Log.d(TAG, "EndIndex :" + endIndex)
 
         return endIndex
     }
+
 
     private fun getIndexID(nameOfIndex: String) : String
     {
@@ -77,16 +70,15 @@ class EcosFetchr {
         {
             "KOSPI" ->
             {
-                return "0001000"
+                return "1080000" // KOSPI 월 평균
             }
             "KOSDAQ" ->
             {
-                return "0089000"
+                return "2100000" // KOSDAQ 월 평균
             }
 
         }
-        return "0001000"
+        return "1080000"
     }
-
 
 }
